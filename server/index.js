@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import connectDB from './config/db.js'
+import { notFound, errorHandler } from './middleware/errorMiddleware.js'
+import authRoutes from './routes/auth.js' // 
 
 dotenv.config()
 
@@ -41,6 +43,11 @@ app.get('/', (req, res) => {
     message: 'HireReady API is running...'
   })
 })
+
+app.use('/api/auth', authRoutes) // 👈 add
+
+app.use(notFound)
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
