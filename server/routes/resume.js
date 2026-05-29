@@ -27,11 +27,27 @@ const upload = multer({
   }
 })
 
+const handleMulterError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      res.status(400)
+      return next(new Error('File size cannot exceed 5MB'))
+    }
+    res.status(400)
+    return next(new Error(err.message))
+  }
+  if (err) {
+    res.status(400)
+    return next(new Error(err.message))
+  }
+  next()
+}
+
 const router = express.Router()
 
 router.use(protect)
 
-router.post('/upload', upload.single('resume'), uploadResume)
+router.post('/upload', upload.single('resume'), handleMulterError, uploadResume)
 router.post('/form', createResumeFromForm)
 router.post('/generate', generateResume)
 router.get('/score/:id', getATSScore)

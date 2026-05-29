@@ -10,7 +10,7 @@ const analyzeJobDescription = async (req, res, next) => {
     const { jdText } = req.body
 
     // 1. Input validate 
-    if (!jdText || jdText.trim().length < 50) {
+  if (!jdText || typeof jdText !== 'string' || jdText.trim().length < 50) {
       res.status(400)
       throw new Error('Please provide a valid job description')
     }

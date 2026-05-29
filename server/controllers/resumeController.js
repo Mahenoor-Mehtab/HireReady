@@ -8,6 +8,13 @@ import {
 
 // PDF file se text extract  
 const extractTextFromPDF = async (buffer) => {
+     if (!buffer || buffer.length < 4) {
+    throw new Error('Invalid file uploaded')
+  }
+  const pdfSignature = buffer.slice(0, 4).toString()
+  if (pdfSignature !== '%PDF') {
+    throw new Error('Uploaded file is not a valid PDF')
+  }
   const data = await pdfParse(buffer)
   if (!data.text || data.text.trim().length < 50) {
     throw new Error('Could not extract text from PDF')
