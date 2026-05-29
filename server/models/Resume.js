@@ -10,11 +10,11 @@ const resumeSchema = new mongoose.Schema(
     },
 
     // User ne jo JD paste ki
-    jdText: {
-      type: String,
-      required: [true, 'Job description is required'],
-      trim: true
-    },
+   jdText: {
+  type: String,
+  default: '',
+  trim: true
+},
 
     // User ka original resume (uploaded ya form se)
     originalResume: {
