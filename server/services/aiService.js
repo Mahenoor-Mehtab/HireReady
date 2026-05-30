@@ -60,24 +60,37 @@ const parseJSON = (content) => {
 const callWithRetry = async (fn, retries = 3, delay = 1000) => {
   for (let i = 0; i < retries; i++) {
     try {
-      return await fn()
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error('AI request timed out — please try again')),
+          30000
+        )
+      )
+
+      return await Promise.race([fn(), timeoutPromise])
+
     } catch (error) {
       const isLastAttempt = i === retries - 1
 
-      // Rate limit → wait karke retry
+      // Timeout pe bhi retry karo — sirf last attempt pe throw karo
+      if (error.message === 'AI request timed out — please try again') {
+        if (isLastAttempt) throw error
+        console.warn(`Timeout, retrying attempt ${i + 2}...`)
+        await new Promise((res) => setTimeout(res, delay * (i + 1)))
+        continue  // ← Retry!
+      }
+
       if (error?.status === 429 && !isLastAttempt) {
         console.warn(`Rate limit hit, retrying in ${delay * (i + 1)}ms...`)
         await new Promise((res) => setTimeout(res, delay * (i + 1)))
         continue
       }
 
-      // Network reset → retry
       if (error?.code === 'ECONNRESET' && !isLastAttempt) {
         await new Promise((res) => setTimeout(res, delay))
         continue
       }
 
-      // Baaki errors → seedha throw
       throw error
     }
   }
