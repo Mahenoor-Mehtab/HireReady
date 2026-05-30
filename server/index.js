@@ -5,6 +5,8 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
+import mongoSanitize from 'express-mongo-sanitize'
+import xss from 'xss-clean'
 import connectDB from './config/db.js'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import authRoutes from './routes/auth.js' 
@@ -19,6 +21,12 @@ const app = express()
 
 // extra Security Headers provide karna unnecessary stuff ko block kr de
 app.use(helmet())
+
+// MongoDB injection rokta hai
+app.use(mongoSanitize())
+
+// HTML/Script tags body se remove karta hai
+app.use(xss())
 
 const corsOptions = {
   origin: process.env.CLIENT_URL || 'http://localhost:5173',

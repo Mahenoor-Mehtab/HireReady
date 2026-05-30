@@ -22,7 +22,12 @@ const extractTextFromPDF = async (buffer) => {
   if (!data.text || data.text.trim().length < 50) {
     throw new Error('Could not extract text from PDF')
   }
-  return data.text.trim()
+
+  // Resume text 10,000 characters tak limit 
+  const extractedText = data.text.trim()
+  return extractedText.length > 10000
+    ? extractedText.substring(0, 10000)
+    : extractedText
 }
 
 const uploadResume = async (req, res, next) => {
