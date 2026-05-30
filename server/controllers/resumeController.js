@@ -1,10 +1,13 @@
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+
 import Resume from '../models/Resume.js'
-import pdfParse from 'pdf-parse'
 import {
   generateATSResume,
   calculateATSScore,
   analyzeJD
 } from '../services/aiService.js'
+const pdfParse = require('pdf-parse')
 
 // PDF file se text extract  
 const extractTextFromPDF = async (buffer) => {
