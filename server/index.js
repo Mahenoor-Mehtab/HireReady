@@ -1,6 +1,8 @@
+dotenv.config()
+
+import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import connectDB from './config/db.js'
@@ -8,8 +10,8 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import authRoutes from './routes/auth.js' 
 import resumeRoutes from './routes/resume.js'
 import jdRoutes from './routes/jd.js'  
-
-dotenv.config()
+import interviewRoutes from './routes/interview.js'
+import chatRoutes from './routes/chat.js' 
 
 connectDB()
 
@@ -49,6 +51,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes) 
 app.use('/api/jd', jdRoutes)
 app.use('/api/resume', resumeRoutes) 
+app.use('/api/interview', interviewRoutes) 
+app.use('/api/chat', chatRoutes)    
 
 app.use(notFound)
 app.use(errorHandler)
